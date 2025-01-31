@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <title>ប្រព័ន្ធគ្រប់គ្រងហាងលក់កុំព្យូទ័រ</title>
+    <style>
+        body {
+            font-family: 'Khmer OS', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        #result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success { background-color: #dff0d8; color: #3c763d; }
+        .error { background-color: #f2dede; color: #a94442; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>ប្រព័ន្ធគ្រប់គ្រងហាងលក់កុំព្យូទ័រ</h2>
+        
+        <table id="computerStock">
+            <thead>
+                <tr>
+                    <th>ម៉ាក</th>
+                    <th>តម្លៃ ($)</th>
+                    <th>ស្តុកនៅសល់</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Apple</td>
+                    <td>2000</td>
+                    <td id="appleStock">10</td>
+                </tr>
+                <tr>
+                    <td>Dell</td>
+                    <td>700</td>
+                    <td id="dellStock">10</td>
+                </tr>
+                <tr>
+                    <td>Lenovo</td>
+                    <td>600</td>
+                    <td id="lenovoStock">10</td>
+                </tr>
+                <tr>
+                    <td>Acer</td>
+                    <td>350</td>
+                    <td id="acerStock">10</td>
+                </tr>
+                <tr>
+                    <td>Asus</td>
+                    <td>750</td>
+                    <td id="asusStock">10</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <select id="computerType">
+            <option value="">ជ្រើសរើសម៉ាកកុំព្យូទ័រ</option>
+            <option value="apple">Apple</option>
+            <option value="dell">Dell</option>
+            <option value="lenovo">Lenovo</option>
+            <option value="acer">Acer</option>
+            <option value="asus">Asus</option>
+        </select>
+
+        <input type="number" id="quantity" placeholder="បរិមាណ">
+        <button onclick="sellComputer()">លក់កុំព្យូទ័រ</button>
+
+        <div id="invoice"></div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const computers = {
+            apple: { price: 2000, stock: 10 },
+            dell: { price: 700, stock: 10 },
+            lenovo: { price: 600, stock: 10 },
+            acer: { price: 350, stock: 10 },
+            asus: { price: 750, stock: 10 }
+        };
+
+        let totalProfit = 0;
+
+        function sellComputer() {
+            const computerType = document.getElementById('computerType').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const resultDiv = document.getElementById('result');
+            const invoiceDiv = document.getElementById('invoice');
+
+            // Validate inputs
+            if (!computerType || !quantity || quantity <= 0) {
+                resultDiv.innerHTML = "សូមបំពេញព័ត៌មានឱ្យបានត្រឹមត្រូវ";
+                resultDiv.className = "error";
+                return;
+            }
+
+            // Check stock
+            if (quantity > computers[computerType].stock) {
+                resultDiv.innerHTML = `ស្តុកមិនគ្រប់ (នៅសល់: ${computers[computerType].stock} គ្រឿង)`;
+                resultDiv.className = "error";
+                return;
+            }
+
+            // Calculate total price and profit
+            const unitPrice = computers[computerType].price;
+            const totalPrice = unitPrice * quantity;
+            const profit = totalPrice * 0.15;  // 15% profit
+            totalProfit += profit;
+
+            // Update stock
+            computers[computerType].stock -= quantity;
+            document.getElementById(`${computerType}Stock`).textContent = computers[computerType].stock;
+
+            // Generate invoice
+            invoiceDiv.innerHTML = `
+                <h3>វិក័យបត្រ</h3>
+                <p>ម៉ាក: ${computerType.toUpperCase()}</p>
+                <p>បរិមាណ: ${quantity} គ្រឿង</p>
+                <p>តម្លៃរាយ: $${unitPrice}</p>
+                <p>សរុបតម្លៃ: $${totalPrice}</p>
+                <p>ប្រាក់ចំណេញ: $${profit.toFixed(2)}</p>
+            `;
+
+            // Show success message
+            resultDiv.innerHTML = "លក់កុំព្យូទ័រដោយជោគជ័យ";
+            resultDiv.className = "success";
+        }
+    </script>
+</body>
+</html>
